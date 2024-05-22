@@ -6,10 +6,8 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
 import org.springframework.stereotype.Service;
 
-import com.ricardo.literatura.app.Application;
 import com.ricardo.literatura.app.models.Book;
 import com.ricardo.literatura.app.models.Data;
 import com.ricardo.literatura.app.models.DataBook;
@@ -19,18 +17,23 @@ import com.ricardo.literatura.app.repositories.PersonRepository;
 import com.ricardo.literatura.app.services.ConvertData;
 import com.ricardo.literatura.app.services.GetAPI;
 
+/*
+ * En esta clase se generan el menu y los diferentes metodos para cargar los datos de la API gutendex.com,
+ * para posteriormente guardarse en una base de datos, se evita tener duplicidades de tanto libros como autores
+ * */
 @Service
 public class Principal {
 
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
-	}
-
+	// Llama a la clase Scaner para poder buscar la informacion
 	Scanner keyBoard = new Scanner(System.in);
+	// Se carga la informacion de la API gutendex.com
 	private GetAPI getApi = new GetAPI();
 	private final String URL_BASE = "https://gutendex.com/books/?search=";
+
+	// Se combierte el json en clases
 	private ConvertData convertData = new ConvertData();
 
+	// Se llama a los repositorios para acceder a la base de datos
 	@Autowired
 	private BookRepository bookRepository;
 
@@ -42,6 +45,7 @@ public class Principal {
 		this.personRepository = personRepository;
 	}
 
+	// Es el menu de opciones para llamar a los metodos
 	public void showMenu() {
 
 		var opcion = -1;
@@ -92,6 +96,11 @@ public class Principal {
 			}
 		}
 	}
+	/*
+	 * Metodos que se encarga de convertir la clase DataBook en las clases Book y
+	 * Person ademas de validar que no exista en la base de datos y guardar los
+	 * datos
+	 */
 
 	private void findBookWeb() {
 		DataBook data = getDataBook();
@@ -137,6 +146,7 @@ public class Principal {
 
 	}
 
+	// Se obtiene los datos de la API y se convierte a la clase DataBook
 	private DataBook getDataBook() {
 		System.out.println("Escribe el nombre del libro");
 		var nameBook = keyBoard.nextLine();
@@ -157,6 +167,7 @@ public class Principal {
 		return book2;
 	}
 
+	// Se busca dentro de la base datos por nombre de la clase Book
 	private void findByTitle() {
 		System.out.println("Escriba el nombre del libro que desea buscar");
 		String title = keyBoard.nextLine();
@@ -165,33 +176,20 @@ public class Principal {
 
 	}
 
+	// Se busca dentro de la base dato la clase Book
 	private void findAllBooks() {
 		List<Book> allbooks = bookRepository.findAll();
 		extractedBook(allbooks);
 
 	}
 
+	// Se busca dentro de la base dato la clase Person
 	private void findAllPersons() {
 		List<Person> allPersons = personRepository.findAll();
 		extractedPerson(allPersons);
 	}
 
-	private void extractedPerson(List<Person> allPersons) {
-		for (Person p : allPersons) {
-			String book = p.getBooks().stream().map(Book::getTitle).collect(Collectors.joining(", "));
-
-			String print = String.format("""
-					-----------------
-					Autor: %s
-					Fecha de nacimiento: %d
-					Fecha de fallecimiento: %d
-					Libros: %s
-					------------------
-					""", p.getName(), p.getBirthYear(), p.getDeahtYear(), book);
-			System.out.println(print);
-		}
-	}
-
+	//Busca dentro de la base de datos por  año para determinar si estaba vivo
 	private void findPersonByYear() {
 		System.out.println("Ingresa el año vivo del autor(es) que decea buscar");
 		Integer year = keyBoard.nextInt();
@@ -199,6 +197,7 @@ public class Principal {
 		extractedPerson(allPersons);
 	}
 
+	//Busca dentro de la base de datos los libros por idioma
 	private void findLanguages() {
 		System.out.println("""
 				Escriba el idioma del libro que desea buscar:
@@ -209,12 +208,13 @@ public class Principal {
 				""");
 		String lang = keyBoard.nextLine();
 		List<Book> allbooks = bookRepository.findByLanguages(lang);
-		if(allbooks.isEmpty()) {
+		if (allbooks.isEmpty()) {
 			System.out.println("No hay libros en ese idioma");
 		}
 		extractedBook(allbooks);
 	}
 
+	//Metodo para mostrar la informaion de libros en pantalla
 	private void extractedBook(List<Book> allbooks) {
 		for (Book b : allbooks) {
 
@@ -228,6 +228,23 @@ public class Principal {
 					Numero de descargas: %.0f
 					------------------
 					""", b.getTitle(), name, lenguaje, b.getDownloadCount());
+			System.out.println(print);
+		}
+	}
+
+	//Metodo para mostrar la informaion de personas en pantalla
+	private void extractedPerson(List<Person> allPersons) {
+		for (Person p : allPersons) {
+			String book = p.getBooks().stream().map(Book::getTitle).collect(Collectors.joining(", "));
+
+			String print = String.format("""
+					-----------------
+					Autor: %s
+					Fecha de nacimiento: %d
+					Fecha de fallecimiento: %d
+					Libros: %s
+					------------------
+					""", p.getName(), p.getBirthYear(), p.getDeahtYear(), book);
 			System.out.println(print);
 		}
 	}
