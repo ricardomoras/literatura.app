@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import jakarta.persistence.*;
 
+// Clase que representa un libro en el sistema.	
 @Entity
 public class Book {
 
@@ -23,9 +24,11 @@ public class Book {
 	
 	private Double downloadCount;
 
+	// Constructor vacío requerido por JPA.
 	public Book() {
 	}
 
+	// Constructor completo para inicializar todos los atributos de un libro.
 	public Book(String title, List<Person> persons, List<String> languages, Double downloadCount) {
 		this.title = title;
 		this.persons = persons;
@@ -33,11 +36,13 @@ public class Book {
 		this.downloadCount = downloadCount;
 	}
 
+	// Constructor simplificado
 	public Book(String title, Double downloadCount) {
 		this.title = title;
 		this.downloadCount = downloadCount;
 	}
 
+	// Constructor que convierte datos externos (DataBook) en un objeto Book.
 	public Book(DataBook data) {
 		this.title = data.title();
 		this.persons = data.author().stream().map(a -> new Person(a.name(), a.birthYear(), a.deathYear()))
@@ -47,6 +52,7 @@ public class Book {
 
 	}
 
+	// Métodos getters y setters
 	public Long getId() {
 		return id;
 	}
@@ -90,6 +96,7 @@ public class Book {
 		this.downloadCount = downloadCount;
 	}
 
+	//Método toString para obtener una representación en forma de cadena del objeto Book.
 	@Override
 	public String toString() {
 		return "title=" + title + ", downloadCount=" + downloadCount;

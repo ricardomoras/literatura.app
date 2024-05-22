@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 
+//Clase que representa un persona(autor) en el sistema.	
 @Entity
 public class Person {
 	@Id
@@ -22,15 +23,18 @@ public class Person {
 	@ManyToMany(mappedBy = "persons", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
 	private List<Book> books = new ArrayList<>();
 
+	// Constructor vacío requerido por JPA.
 	public Person() {
 	}
 
+	// Constructor completo para inicializar todos los atributos de una persona.
 	public Person(String name, Integer birthYear, Integer deahtYear) {
 		this.name = name;
 		this.birthYear = birthYear;
 		this.deahtYear = deahtYear;
 	}
 
+	// Métodos getters y setters
 	public String getName() {
 		return name;
 	}
@@ -59,13 +63,6 @@ public class Person {
 		this.id = id;
 	}
 
-	
-
-	@Override
-	public String toString() {
-		return "Person [id=" + id + ", name=" + name + ", birthYear=" + birthYear + ", deahtYear=" + deahtYear + "]";
-	}
-
 	public List<Book> getBooks() {
 		return books;
 	}
@@ -80,5 +77,12 @@ public class Person {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	//Método toString para obtener una representación en forma de cadena del objeto Person.
+	@Override
+	public String toString() {
+		return "Person [id=" + id + ", name=" + name + ", birthYear=" + birthYear + ", deahtYear=" + deahtYear + "]";
+	}
+
 
 }

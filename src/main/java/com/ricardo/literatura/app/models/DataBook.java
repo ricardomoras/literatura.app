@@ -5,7 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-
+//Clase que representa los datos recibidos de los libros de la API gutendex.com.
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record DataBook(
         @JsonAlias("title") String title,
